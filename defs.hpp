@@ -3,7 +3,7 @@
 
 using T = float;
 
-constexpr T max_len_sq = 1000;
+constexpr T max_len_sq = 4;
 constexpr unsigned maxiter = 512;
 
 std::unique_ptr<T[]> mandelbrot_baseline(

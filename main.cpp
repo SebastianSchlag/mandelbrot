@@ -64,32 +64,6 @@ int main() {
   const size_t size_y = 1 << 10;
   const size_t size_x = size_y / 2 * 3;
 
-/*
-  auto* iters = reinterpret_cast<T*>(
-    aligned_alloc(64, sizeof(T)* size_x * size_y));
-*/
-/* Hint compiler that image size is a multiple of 8
-  constexpr size_t padding = 8;
-  re_size = ((re_size + padding - 1) / padding) * padding;
-  im_size = ((im_size + padding - 1) / padding) * padding;
-*/
-
-#ifdef WITH_VC
-  if (true) {
-    ScopedTimer timer("Computation VC");
-    auto mandel = mandelbrot_vc(-2.0, 1.0, size_x, -1.0, 1.0, size_y);
-    render_image("mandel_vc.png", size_x, size_y, mandel.get());
-  }
-#endif
-
-#ifdef WITH_PIK
-  if (true) {
-    ScopedTimer timer("Computation PIK");
-    auto mandel = mandelbrot_pik(-2.0, 1.0, size_x, -1.0, 1.0, size_y);
-    render_image("mandel_pik.png", size_x, size_y, mandel.get());
-  }
-#endif
-
   double time_base;
   {
     ScopedTimer timer(time_base, "Computation Base");
