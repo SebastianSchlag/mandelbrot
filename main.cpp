@@ -64,10 +64,14 @@ int main() {
   const size_t size_y = 1 << 11;
   const size_t size_x = size_y / 2 * 3;
 
+  std::unique_ptr<T[]> mandel;
+
   double time_base;
   {
-    ScopedTimer timer(time_base, "Base                   ");
-    auto mandel = mandelbrot_baseline(-2.0, 1.0, size_x, -1.0, 1.0, size_y, false);
+    {
+      ScopedTimer timer(time_base, "Base                   ");
+      mandel = mandelbrot_baseline(-2.0, 1.0, size_x, -1.0, 1.0, size_y, false);
+    }
     render_image("mandel_base.png", size_x, size_y, mandel.get());
   }
 
@@ -78,26 +82,34 @@ int main() {
                                : " (task par)     ";
 
     if (task_parallel) {
-      ScopedTimer timer("Base   " + suffix, time_base);
-      auto mandel = mandelbrot_baseline(-2.0, 1.0, size_x, -1.0, 1.0, size_y, task_parallel);
+      {
+        ScopedTimer timer("Base   " + suffix, time_base);
+        mandel = mandelbrot_baseline(-2.0, 1.0, size_x, -1.0, 1.0, size_y, task_parallel);
+      }
       render_image("mandel_base.png", size_x, size_y, mandel.get());
     }
 
     {
-      ScopedTimer timer("VC     " + suffix, time_base);
-      auto mandel = mandelbrot_vc(-2.0, 1.0, size_x, -1.0, 1.0, size_y, task_parallel);
+      {
+        ScopedTimer timer("VC     " + suffix, time_base);
+        mandel = mandelbrot_vc(-2.0, 1.0, size_x, -1.0, 1.0, size_y, task_parallel);
+      }
       render_image("mandel_vc.png", size_x, size_y, mandel.get());
     }
 
     {
-      ScopedTimer timer("Intrin " + suffix, time_base);
-      auto mandel = mandelbrot_intrinsics(-2.0, 1.0, size_x, -1.0, 1.0, size_y, task_parallel);
+      {
+        ScopedTimer timer("Intrin " + suffix, time_base);
+        mandel = mandelbrot_intrinsics(-2.0, 1.0, size_x, -1.0, 1.0, size_y, task_parallel);
+      }
       render_image("mandel_intrinsics.png", size_x, size_y, mandel.get());
     }
 
     {
-      ScopedTimer timer("Intrin2" + suffix, time_base);
-      auto mandel = mandelbrot_intrinsics2(-2.0, 1.0, size_x, -1.0, 1.0, size_y, task_parallel);
+      {
+        ScopedTimer timer("Intrin2" + suffix, time_base);
+        mandel = mandelbrot_intrinsics2(-2.0, 1.0, size_x, -1.0, 1.0, size_y, task_parallel);
+      }
       render_image("mandel_intrinsics2.png", size_x, size_y, mandel.get());
     }
 

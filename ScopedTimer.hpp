@@ -84,10 +84,13 @@ public:
 
         std::stringstream ss;
 
+        ss << std::setprecision(1) << std::fixed;
+
         if (_reference <= 0.0) {
             ss << prefix << " Time elapsed: " << std::setw(12) << timeUs << "ms";
         } else {
-            ss << prefix << " Time elapsed: " << std::setw(12) << timeUs << "ms (speed up: " << (_reference / timeUs) << ")";
+            ss << prefix << " Time elapsed: " << std::setw(12) << timeUs << "ms "
+              "(speed up:" << std::setw(5) << (_reference / timeUs) << ")";
         }
 
         std::cout << ss.str() << std::endl;
