@@ -28,6 +28,7 @@
 #define SCOPED_TIMER_HPP
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <sstream>
 #include <chrono>
@@ -80,12 +81,16 @@ public:
 
     double report(const std::string & prefix) const {
         const double timeUs = elapsed();
-        
+
+        std::stringstream ss;
+
         if (_reference <= 0.0) {
-            std::cout << prefix << " Time elapsed: " << timeUs << "ms" << std::endl;
+            ss << prefix << " Time elapsed: " << std::setw(12) << timeUs << "ms";
         } else {
-            std::cout << prefix << " Time elapsed: " << timeUs << "ms (speed up: " << (_reference / timeUs) << ")" << std::endl;
+            ss << prefix << " Time elapsed: " << std::setw(12) << timeUs << "ms (speed up: " << (_reference / timeUs) << ")";
         }
+
+        std::cout << ss.str() << std::endl;
 
         return timeUs;
     }

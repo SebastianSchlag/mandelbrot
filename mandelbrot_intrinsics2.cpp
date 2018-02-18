@@ -5,8 +5,9 @@ constexpr size_t packing = 8;
 
 std::unique_ptr<T[]> mandelbrot_intrinsics2(
   const T re_min, const T re_max, size_t re_size,
-  const T im_min, const T im_max, size_t im_size)
-{
+  const T im_min, const T im_max, size_t im_size,
+  bool task_parallel
+) {
   std::unique_ptr<T[]> result(reinterpret_cast<T*>(
     aligned_alloc(sizeof(T) * packing, re_size * im_size * sizeof(T))));
 
@@ -32,6 +33,7 @@ std::unique_ptr<T[]> mandelbrot_intrinsics2(
   }
 
   // foreach line ...
+  #pragma omp parallel for if (task_parallel)
   for(size_t py=0; py < im_size; py++) {
     const __m256 im_coord = _mm256_set1_ps(im_min + py * im_step);
 

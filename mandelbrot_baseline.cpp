@@ -2,8 +2,9 @@
 
 std::unique_ptr<T[]> mandelbrot_baseline(
   T re_min, T re_max, size_t re_size,
-  T im_min, T im_max, size_t im_size)
-{
+  T im_min, T im_max, size_t im_size,
+  bool task_parallel
+) {
   std::unique_ptr<T[]> result(new T[re_size * im_size]);
 
 // Define constants
@@ -14,6 +15,7 @@ std::unique_ptr<T[]> mandelbrot_baseline(
   const T im_step = (im_max - im_min) / im_size;
 
   // foreach line ...
+  #pragma omp parallel for if (task_parallel)
   for(size_t py=0; py < im_size; py++) {
     const T im_coord = im_min + py * im_step;
 
