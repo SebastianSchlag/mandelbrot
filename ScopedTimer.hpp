@@ -38,21 +38,21 @@ class ScopedTimer {
     std::string _prefix;
     Clock::time_point _begin;
 
-    uint64_t _scale;
-    double _offset;
+    double _reference;
 
     double* _output;
 
 public:
     ScopedTimer()
-          : _begin(Clock::now()), _scale(1), _offset(0), _output(nullptr)
+          : _begin(Clock::now()), _output(nullptr), _reference(0)
     {}
 
-    ScopedTimer(const std::string& prefix, uint64_t scale=0, double offset=0.0)
-          : _prefix(prefix), _begin(Clock::now()), _scale(scale), _offset(offset), _output(nullptr)
+    ScopedTimer(const std::string& prefix, double reference=0.0)
+          : _prefix(prefix), _begin(Clock::now()), _reference(reference), _output(nullptr)
     {}
 
-    ScopedTimer(double& output) : _begin(Clock::now()), _scale(1), _offset(0), _output(&output) {}
+    ScopedTimer(double& output, const std::string& prefix = "")
+      : _prefix(prefix), _begin(Clock::now()),  _reference(0), _output(&output) {}
 
     ~ScopedTimer() {
         if (!_prefix.empty())
@@ -71,7 +71,7 @@ public:
         std::chrono::duration<double> time_span =
                 std::chrono::duration_cast<std::chrono::duration<double>>(t2 - _begin);
 
-        return (time_span.count()*1e3) - _offset;
+        return (time_span.count()*1e3);
     }
 
     double report() const {
@@ -81,10 +81,10 @@ public:
     double report(const std::string & prefix) const {
         const double timeUs = elapsed();
         
-        if (!_scale) {
+        if (_reference <= 0.0) {
             std::cout << prefix << " Time elapsed: " << timeUs << "ms" << std::endl;
         } else {
-            std::cout << prefix << " Time elapsed: " << timeUs << "ms / " << _scale << " = " <<  (1e3*timeUs / _scale) << "us" << std::endl;
+            std::cout << prefix << " Time elapsed: " << timeUs << "ms (speed up: " << (_reference / timeUs) << ")" << std::endl;
         }
 
         return timeUs;

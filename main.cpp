@@ -90,18 +90,24 @@ int main() {
   }
 #endif
 
-  if (true) {
-    ScopedTimer timer("Computation Intrinsics");
-    auto mandel = mandelbrot_intrinsics(-2.0, 1.0, size_x, -1.0, 1.0, size_y);
-    render_image("mandel_intrinsics.png", size_x, size_y, mandel.get());
-  }
-
-  if (true) {
-    ScopedTimer timer("Computation Base");
+  double time_base;
+  {
+    ScopedTimer timer(time_base, "Computation Base");
     auto mandel = mandelbrot_baseline(-2.0, 1.0, size_x, -1.0, 1.0, size_y);
     render_image("mandel_base.png", size_x, size_y, mandel.get());
   }
 
+  {
+    ScopedTimer timer("Computation Intrinsics", time_base);
+    auto mandel = mandelbrot_intrinsics(-2.0, 1.0, size_x, -1.0, 1.0, size_y);
+    render_image("mandel_intrinsics.png", size_x, size_y, mandel.get());
+  }
+
+  {
+    ScopedTimer timer("Computation Intrinsics2", time_base);
+    auto mandel = mandelbrot_intrinsics2(-2.0, 1.0, size_x, -1.0, 1.0, size_y);
+    render_image("mandel_intrinsics2.png", size_x, size_y, mandel.get());
+  }
 
   return 0;
 }

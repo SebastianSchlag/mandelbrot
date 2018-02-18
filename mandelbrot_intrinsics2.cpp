@@ -3,7 +3,7 @@
 
 constexpr size_t packing = 8;
 
-std::unique_ptr<T[]> mandelbrot_intrinsics(
+std::unique_ptr<T[]> mandelbrot_intrinsics2(
   const T re_min, const T re_max, size_t re_size,
   const T im_min, const T im_max, size_t im_size)
 {
@@ -27,7 +27,7 @@ std::unique_ptr<T[]> mandelbrot_intrinsics(
       3*re_step, 2*re_step, 1*re_step, 0*re_step
     );
 
-    re_min_v = _mm256_add_ps(_mm256_set1_ps(re_min), shift);
+    re_min_v = _mm256_set1_ps(re_min) + shift;
   }
 
   for(size_t py=0; py < im_size; py++) {
@@ -40,26 +40,26 @@ std::unique_ptr<T[]> mandelbrot_intrinsics(
 
       __m256 counts = _mm256_setzero_ps();
       for(size_t iter = 0; iter < maxiter; iter++) {
-        __m256 re_sq = _mm256_mul_ps(re, re);
-        __m256 im_sq = _mm256_mul_ps(im, im);
-        __m256 re_im = _mm256_mul_ps(re, im);
-        __m256 len_sq = _mm256_add_ps(re_sq, im_sq);
+        __m256 re_sq = re * re;
+        __m256 im_sq = im * im;
+        __m256 re_im = re * im;
+        __m256 len_sq = re_sq + im_sq;
 
         // masking
-        __m256 not_diverged = _mm256_cmp_ps(len_sq, max_len_sq_v, _CMP_LT_OS);
+        __m256 not_diverged = len_sq < max_len_sq_v;
         __m256 tmp = _mm256_and_ps(all_increment, not_diverged);
-        counts = _mm256_add_ps(counts, tmp);
+        counts = counts + tmp;
 
         // check if all diverged
         int mask = _mm256_movemask_ps(not_diverged);
         if (!mask) break;
 
-        re = _mm256_add_ps(_mm256_sub_ps(re_sq, im_sq), re_coord);
-        im = _mm256_add_ps(_mm256_add_ps(re_im, re_im), im_coord);
+        re = re_sq - im_sq + re_coord;
+        im = re_im + re_im + im_coord;
       }
 
       _mm256_store_ps(&result[py*re_size + px], counts);
-      re_coord = _mm256_add_ps(re_coord, re_step_v);
+      re_coord = re_coord + re_step_v;
     }
   }
 
