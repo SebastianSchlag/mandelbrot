@@ -98,6 +98,12 @@ int main() {
   }
 
   {
+    ScopedTimer timer("Computation VC", time_base);
+    auto mandel = mandelbrot_vc(-2.0, 1.0, size_x, -1.0, 1.0, size_y);
+    render_image("mandel_vc.png", size_x, size_y, mandel.get());
+  }
+
+  {
     ScopedTimer timer("Computation Intrinsics", time_base);
     auto mandel = mandelbrot_intrinsics(-2.0, 1.0, size_x, -1.0, 1.0, size_y);
     render_image("mandel_intrinsics.png", size_x, size_y, mandel.get());

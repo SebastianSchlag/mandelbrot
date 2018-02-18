@@ -1,0 +1,6 @@
+[submodule "extern/Vc"]
+	path = extern/Vc
+	url = https://github.com/VcDevel/Vc
+[submodule "extern/pik"]
+	path = extern/pik
+	url = https://github.com/google/pik.git

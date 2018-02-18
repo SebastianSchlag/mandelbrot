@@ -9,6 +9,13 @@ set(SRC_FILES
         mandelbrot_intrinsics2.cpp
 )
 
+if(1)
+    include(extern/LocalVcConfig.cmake REQUIRED)
+    list(APPEND SRC_FILES "mandelbrot_vc.cpp")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DWITH_VC")
+endif(USE_VC)
+
+
 add_executable(mandelbrot main.cpp
     ${SRC_FILES}
 )
